@@ -201,7 +201,18 @@ class Selection {
       if (leaf == null) return null;
       [node, offset] = leaf.position(offset, true);
       range.setEnd(node, offset);
-      return range.getBoundingClientRect();
+      const rect = range.getBoundingClientRect();
+      const containerRect = this.root.getBoundingClientRect();
+      
+      // Constrain the bounds within the container
+      return {
+        left: Math.max(containerRect.left, Math.min(rect.left, containerRect.right)),
+        right: Math.max(containerRect.left, Math.min(rect.right, containerRect.right)),
+        top: Math.max(containerRect.top, Math.min(rect.top, containerRect.bottom)),
+        bottom: Math.max(containerRect.top, Math.min(rect.bottom, containerRect.bottom)),
+        width: Math.min(rect.width, containerRect.width),
+        height: Math.min(rect.height, containerRect.height)
+      };
     }
     let side: 'left' | 'right' = 'left';
     let rect: DOMRect;

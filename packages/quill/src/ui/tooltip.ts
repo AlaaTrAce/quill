@@ -30,31 +30,42 @@ class Tooltip {
   }
 
   position(reference: Bounds) {
-    const left =
-      reference.left + reference.width / 2 - this.root.offsetWidth / 2;
-    // root.scrollTop should be 0 if scrollContainer !== root
-    const top = reference.bottom + this.quill.root.scrollTop;
-    this.root.style.left = `${left}px`;
-    this.root.style.top = `${top}px`;
-    this.root.classList.remove('ql-flip');
     const containerBounds = this.boundsContainer.getBoundingClientRect();
     const rootBounds = this.root.getBoundingClientRect();
-    let shift = 0;
-    if (rootBounds.right > containerBounds.right) {
-      shift = containerBounds.right - rootBounds.right;
-      this.root.style.left = `${left + shift}px`;
-    }
-    if (rootBounds.left < containerBounds.left) {
-      shift = containerBounds.left - rootBounds.left;
-      this.root.style.left = `${left + shift}px`;
-    }
-    if (rootBounds.bottom > containerBounds.bottom) {
-      const height = rootBounds.bottom - rootBounds.top;
-      const verticalShift = reference.bottom - reference.top + height;
-      this.root.style.top = `${top - verticalShift}px`;
+    
+    // Calculate initial position (centered)
+    let left = reference.left + reference.width / 2 - this.root.offsetWidth / 2;
+    let top = reference.bottom + this.quill.root.scrollTop;
+    
+    // Constrain horizontal position
+    left = Math.max(
+      containerBounds.left,
+      Math.min(left, containerBounds.right - this.root.offsetWidth)
+    );
+    
+    // Constrain vertical position
+    const bottomSpace = containerBounds.bottom - reference.bottom;
+    const topSpace = reference.top - containerBounds.top;
+    const tooltipHeight = rootBounds.height;
+    
+    // If tooltip doesn't fit below, and there's more space above, flip it
+    if (bottomSpace < tooltipHeight && topSpace > tooltipHeight) {
+      top = reference.top - tooltipHeight + this.quill.root.scrollTop;
       this.root.classList.add('ql-flip');
+    } else {
+      this.root.classList.remove('ql-flip');
     }
-    return shift;
+    
+    // Final position constraining
+    top = Math.max(
+      containerBounds.top,
+      Math.min(top, containerBounds.bottom - tooltipHeight)
+    );
+    
+    this.root.style.left = `${left}px`;
+    this.root.style.top = `${top}px`;
+    
+    return left - (reference.left + reference.width / 2 - this.root.offsetWidth / 2);
   }
 
   show() {

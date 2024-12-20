@@ -46,6 +46,18 @@ class Scroll extends ScrollBlot {
     super(registry, domNode);
     this.emitter = emitter;
     this.batch = false;
+    
+    // Set up proper overflow handling
+    domNode.style.overflow = 'auto';
+    domNode.style.height = '100%';
+    domNode.style.position = 'relative';
+    domNode.style.maxWidth = '100%';
+    
+    // Ensure proper text wrapping
+    domNode.style.wordWrap = 'break-word';
+    domNode.style.overflowWrap = 'break-word';
+    domNode.style.whiteSpace = 'pre-wrap';
+    
     this.optimize();
     this.enable();
     this.domNode.addEventListener('dragstart', (e) => this.handleDragStart(e));

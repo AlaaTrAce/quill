@@ -33,7 +33,15 @@ class Toolbar extends Module<ToolbarProps> {
       const container = document.createElement('div');
       container.setAttribute('role', 'toolbar');
       addControls(container, this.options.container);
-      quill.container?.parentNode?.insertBefore(container, quill.container);
+      if (quill.container) {
+        quill.container.parentNode?.insertBefore(container, quill.container);
+        container.style.position = 'sticky';
+        container.style.top = '0';
+        container.style.zIndex = '1';
+        container.style.backgroundColor = 'inherit';
+        container.style.width = '100%';
+        container.style.marginBottom = '8px';
+      }
       this.container = container;
     } else if (typeof this.options.container === 'string') {
       this.container = document.querySelector(this.options.container);

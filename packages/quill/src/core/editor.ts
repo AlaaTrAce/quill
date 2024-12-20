@@ -23,6 +23,19 @@ class Editor {
   constructor(scroll: Scroll) {
     this.scroll = scroll;
     this.delta = this.getDelta();
+    
+    // Add overflow handling to the editor container
+    const editorContainer = this.scroll.domNode;
+    if (editorContainer instanceof HTMLElement) {
+      editorContainer.style.overflow = 'auto';
+      editorContainer.style.maxWidth = '100%';
+      editorContainer.style.position = 'relative';
+      
+      // Ensure content stays within bounds
+      editorContainer.style.wordWrap = 'break-word';
+      editorContainer.style.overflowWrap = 'break-word';
+      editorContainer.style.whiteSpace = 'pre-wrap';
+    }
   }
 
   applyDelta(delta: Delta): Delta {
