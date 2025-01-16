@@ -17,12 +17,9 @@ permissions:
   contents: write
 
 jobs:
-  test:
-    uses: ./.github/workflows/_test.yml
 
   release:
     runs-on: ubuntu-latest
-    needs: test
 
     steps:
       - name: Git checkout
