@@ -1,6 +1,6 @@
 // @Alaa: Dedicated layout management for Quill editor
 export function setupEditorLayout(container: HTMLElement) {
-  const toolbarElement = container.querySelector('.ql-toolbar');
+  const toolbarElement = container.querySelector('.ql-toolbar') as HTMLElement;
   const editorElement = container.querySelector('.ql-editor');
   
   if (toolbarElement && editorElement instanceof HTMLElement) {
