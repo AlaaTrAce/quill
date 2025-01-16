@@ -247,14 +247,15 @@ class Quill {
         });
         resizeObserver.observe(toolbarElement);
 
-        // Also handle window resize events
-        window.addEventListener('resize', () => {
-          const toolbarHeight = toolbarElement.clientHeight;
-          const editorContainer = this.container.querySelector('.ql-editor');
-          if (editorContainer instanceof HTMLElement) {
-            editorContainer.style.height = `calc(100% - ${toolbarHeight}px)`;
-          }
-        });
+        // // Also handle window resize events
+        // // Alaa: Fix this if it's the one causing issues.
+        // window.addEventListener('resize', () => {
+        //   const toolbarHeight = toolbarElement.clientHeight;
+        //   const editorContainer = this.container.querySelector('.ql-editor');
+        //   if (editorContainer instanceof HTMLElement) {
+        //     editorContainer.style.height = `calc(100% - ${toolbarHeight}px)`;
+        //   }
+        // });
       }
     }
 
@@ -274,14 +275,15 @@ class Quill {
         });
         resizeObserver.observe(toolbarElement);
 
-        // Also handle window resize events
-        window.addEventListener('resize', () => {
-          const toolbarWidth = toolbarElement.clientWidth;
-          const editorContainer = this.container.querySelector('.ql-editor');
-          if (editorContainer instanceof HTMLElement) {
-            editorContainer.style.width = `calc(100% - ${toolbarWidth}px)`;
-          }
-        });
+        // // Also handle window resize events
+        // // Alaa: Fix this if it's the one causing issues.
+        // window.addEventListener('resize', () => {
+        //   const toolbarWidth = toolbarElement.clientWidth;
+        //   const editorContainer = this.container.querySelector('.ql-editor');
+        //   if (editorContainer instanceof HTMLElement) {
+        //     editorContainer.style.width = `calc(100% - ${toolbarWidth}px)`;
+        //   }
+        // });
       }
     }
 
