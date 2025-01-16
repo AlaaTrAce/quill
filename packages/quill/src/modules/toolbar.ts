@@ -41,13 +41,11 @@ class Toolbar extends Module<ToolbarProps> {
         container.style.zIndex = '11';
         container.style.backgroundColor = 'inherit';
         container.style.width = '100%';
-        container.style.height = '100%';
-
-        const toolbarHeight = container.offsetHeight;
+        
+        //@Alaa: Fixed toolbar height and positioning
+        const toolbarHeight = container.offsetHeight || 42; // Default height if not available
         if (quill.container instanceof HTMLElement) {
-          const editorHeight = quill.container.offsetHeight;
           quill.container.style.height = `calc(100% - ${toolbarHeight}px)`;
-          quill.container.style.minHeight = `calc(150px - ${toolbarHeight}px)`;
         }
       }
       this.container = container;
