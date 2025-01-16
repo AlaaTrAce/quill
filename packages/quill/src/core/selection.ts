@@ -67,6 +67,14 @@ class Selection {
       }
     });
 
+    // Ensure focus and selection update on click
+    this.root.addEventListener('click', () => {
+      if (!this.hasFocus()) {
+        this.focus();
+      }
+      this.update(Emitter.sources.USER);
+    });
+
     // Handle Chrome-specific selection issues
     this.root.addEventListener('mouseup', () => {
       if (this.hasFocus()) {
