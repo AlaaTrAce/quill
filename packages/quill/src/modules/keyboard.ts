@@ -134,6 +134,14 @@ class Keyboard extends Module<KeyboardOptions> {
       { collapsed: true, offset: 0 },
       this.handleBackspace,
     );
+    this.addBinding(
+      { key: 'a', shortKey: true },
+      (range: Range) => {
+        const length = this.quill.scroll.length();
+        this.quill.setSelection(0, length, Quill.sources.USER);
+        return false;
+      }
+    );
     this.listen();
   }
 

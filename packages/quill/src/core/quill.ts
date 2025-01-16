@@ -230,6 +230,61 @@ class Quill {
     this.theme.addModule('input');
     this.theme.addModule('uiNode');
     this.theme.init();
+
+    // Add ResizeObserver to handle dynamic toolbar height
+    if (this.options.modules && this.options.modules.toolbar) {
+      const toolbarElement = this.container.querySelector('.ql-toolbar');
+      if (toolbarElement) {
+        const resizeObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const toolbarHeight =
+              entry.borderBoxSize[0]?.blockSize || entry.target.clientHeight;
+            const editorContainer = this.container.querySelector('.ql-editor');
+            if (editorContainer instanceof HTMLElement) {
+              editorContainer.style.height = `calc(100% - ${toolbarHeight}px)`;
+            }
+          }
+        });
+        resizeObserver.observe(toolbarElement);
+
+        // Also handle window resize events
+        window.addEventListener('resize', () => {
+          const toolbarHeight = toolbarElement.clientHeight;
+          const editorContainer = this.container.querySelector('.ql-editor');
+          if (editorContainer instanceof HTMLElement) {
+            editorContainer.style.height = `calc(100% - ${toolbarHeight}px)`;
+          }
+        });
+      }
+    }
+
+    // Add ResizeObserver to handle dynamic toolbar width
+    if (this.options.modules && this.options.modules.toolbar) {
+      const toolbarElement = this.container.querySelector('.ql-toolbar');
+      if (toolbarElement) {
+        const resizeObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const toolbarWidth =
+              entry.borderBoxSize[0]?.inlineSize || entry.target.clientWidth;
+            const editorContainer = this.container.querySelector('.ql-editor');
+            if (editorContainer instanceof HTMLElement) {
+              editorContainer.style.width = `calc(100% - ${toolbarWidth}px)`;
+            }
+          }
+        });
+        resizeObserver.observe(toolbarElement);
+
+        // Also handle window resize events
+        window.addEventListener('resize', () => {
+          const toolbarWidth = toolbarElement.clientWidth;
+          const editorContainer = this.container.querySelector('.ql-editor');
+          if (editorContainer instanceof HTMLElement) {
+            editorContainer.style.width = `calc(100% - ${toolbarWidth}px)`;
+          }
+        });
+      }
+    }
+
     this.emitter.on(Emitter.events.EDITOR_CHANGE, (type) => {
       if (type === Emitter.events.TEXT_CHANGE) {
         this.root.classList.toggle('ql-blank', this.editor.isBlank());
@@ -295,7 +350,7 @@ class Quill {
   }
 
   blur() {
-    this.selection.setRange(null);
+    this.selection.setRange(null, Emitter.sources.API);
   }
 
   deleteText(range: Range, source?: EmitterSource): Delta;
@@ -938,7 +993,10 @@ function overload(
   format: Record<string, unknown>,
   source?: EmitterSource,
 ): NormalizedIndexLength;
-function overload(range: Range, source?: EmitterSource): NormalizedIndexLength;
+function overload(
+  range: Range,
+  source?: EmitterSource,
+): NormalizedIndexLength;
 function overload(
   range: Range,
   format: string,

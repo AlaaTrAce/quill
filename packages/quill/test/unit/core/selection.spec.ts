@@ -56,8 +56,8 @@ describe('Selection', () => {
 
     test('restore last range', () => {
       const { selection, textarea } = setupTest();
-      const range = new Range(1, 2);
-      selection.setRange(range);
+      const range: Range = new Range(1, 2);
+      selection.setRange(range, Emitter.sources.USER);
       textarea.focus();
       textarea.select();
       expect(selection.hasFocus()).toBe(false);
@@ -231,8 +231,8 @@ describe('Selection', () => {
   describe('setRange()', () => {
     test('empty document', () => {
       const selection = createSelection('');
-      const expected = new Range(0);
-      selection.setRange(expected);
+      const expected: Range = new Range(0, 0);
+      selection.setRange(expected, Emitter.sources.USER);
       const [range] = selection.getRange();
       expect(range).toEqual(expected);
       expect(selection.hasFocus()).toBe(true);
@@ -246,8 +246,8 @@ describe('Selection', () => {
           <li data-list="bullet"><br></li>
         </ol>`,
       );
-      const expected = new Range(0, 1);
-      selection.setRange(expected);
+      const expected: Range = new Range(0, 1);
+      selection.setRange(expected, Emitter.sources.USER);
       const [range] = selection.getRange();
       expect(range).toEqual(range);
       expect(selection.hasFocus()).toBe(true);
@@ -261,8 +261,8 @@ describe('Selection', () => {
           <li data-list="bullet"><em><u>34</u></em></li>
         </ol>`,
       );
-      const expected = new Range(1, 3);
-      selection.setRange(expected);
+      const expected: Range = new Range(1, 3);
+      selection.setRange(expected, Emitter.sources.USER);
       const [range] = selection.getRange();
       expect(range).toEqual(expected);
       expect(selection.hasFocus()).toBe(true);
@@ -270,8 +270,8 @@ describe('Selection', () => {
 
     test('between inlines', () => {
       const selection = createSelection('<p><em>01</em><s>23</s><u>45</u></p>');
-      const expected = new Range(2, 2);
-      selection.setRange(expected);
+      const expected: Range = new Range(2, 2);
+      selection.setRange(expected, Emitter.sources.USER);
       const [range] = selection.getRange();
       expect(range).toEqual(expected);
       expect(selection.hasFocus()).toBe(true);
@@ -281,8 +281,8 @@ describe('Selection', () => {
       const selection = createSelection(
         `<p><img src="/assets/favicon.png"></p>`,
       );
-      const expected = new Range(1, 0);
-      selection.setRange(expected);
+      const expected: Range = new Range(1, 0);
+      selection.setRange(expected, Emitter.sources.USER);
       const [range] = selection.getRange();
       expect(range).toEqual(expected);
       expect(selection.hasFocus()).toBe(true);
@@ -302,8 +302,8 @@ describe('Selection', () => {
           </li>
         </ol>`,
       );
-      const expected = new Range(1, 3);
-      selection.setRange(expected);
+      const expected: Range = new Range(1, 3);
+      selection.setRange(expected, Emitter.sources.USER);
       const [range] = selection.getRange();
       expect(range).toEqual(expected);
       expect(selection.hasFocus()).toBe(true);
@@ -311,10 +311,10 @@ describe('Selection', () => {
 
     test('null', () => {
       const selection = createSelection('<p>0123</p>');
-      selection.setRange(new Range(1));
+      selection.setRange(new Range(1), Emitter.sources.USER);
       let [range] = selection.getRange();
       expect(range).not.toEqual(null);
-      selection.setRange(null);
+      selection.setRange(null, Emitter.sources.USER);
       [range] = selection.getRange();
       expect(range).toEqual(null);
       expect(selection.hasFocus()).toBe(false);
@@ -322,10 +322,10 @@ describe('Selection', () => {
 
     test('after format', async () => {
       const selection = createSelection('<p>0123 567 9012</p>');
-      selection.setRange(new Range(5));
+      selection.setRange(new Range(5), Emitter.sources.USER);
       selection.format('bold', true);
       selection.format('bold', false);
-      selection.setRange(new Range(8));
+      selection.setRange(new Range(8), Emitter.sources.USER);
 
       await new Promise<void>((resolve) => {
         selection.emitter.once(Emitter.events.SCROLL_OPTIMIZE, () => {
@@ -340,7 +340,7 @@ describe('Selection', () => {
   describe('format()', () => {
     test('trailing', () => {
       const selection = createSelection(`<p>0123</p>`);
-      selection.setRange(new Range(4));
+      selection.setRange(new Range(4, 0), Emitter.sources.USER);
       selection.format('bold', true);
       expect(selection.getRange()[0]?.index).toEqual(4);
       expect(selection.root).toEqualHTML(`
@@ -350,7 +350,7 @@ describe('Selection', () => {
 
     test('split nodes', () => {
       const selection = createSelection(`<p><em>0123</em></p>`);
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);  
 
       selection.format('bold', true);
       expect(selection.getRange()[0]?.index).toEqual(2);
@@ -361,7 +361,7 @@ describe('Selection', () => {
 
     test('between characters', () => {
       const selection = createSelection(`<p><em>0</em><strong>1</strong></p>`);
-      selection.setRange(new Range(1));
+      selection.setRange(new Range(1, 0), Emitter.sources.USER);
       selection.format('underline', true);
       expect(selection.getRange()[0]?.index).toEqual(1);
       expect(selection.root).toEqualHTML(`
@@ -371,7 +371,7 @@ describe('Selection', () => {
 
     test('empty line', () => {
       const selection = createSelection(`<p><br></p>`);
-      selection.setRange(new Range(0));
+      selection.setRange(new Range(0, 0), Emitter.sources.USER);
       selection.format('bold', true);
       expect(selection.getRange()[0]?.index).toEqual(0);
       expect(selection.root).toEqualHTML(`
@@ -381,7 +381,7 @@ describe('Selection', () => {
 
     test('cursor interference', () => {
       const selection = createSelection(`<p>0123</p>`);
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);
       selection.format('underline', true);
       selection.scroll.update();
       const native = selection.getNativeRange();
@@ -390,7 +390,7 @@ describe('Selection', () => {
 
     test('multiple', () => {
       const selection = createSelection(`<p>0123</p>`);
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);
       selection.format('color', 'red');
       selection.format('italic', true);
       selection.format('underline', true);
@@ -403,7 +403,7 @@ describe('Selection', () => {
 
     test('remove format', () => {
       const selection = createSelection(`<p><strong>0123</strong></p>`);
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);
       selection.format('italic', true);
       selection.format('underline', true);
       selection.format('italic', false);
@@ -415,16 +415,16 @@ describe('Selection', () => {
 
     test('selection change cleanup', () => {
       const selection = createSelection(`<p>0123</p>`);
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);
       selection.format('italic', true);
-      selection.setRange(new Range(0, 0));
+      selection.setRange(new Range(0, 0), Emitter.sources.USER);
       selection.scroll.update();
       expect(selection.root).toEqualHTML('<p>0123</p>');
     });
 
     test('text change cleanup', () => {
       const selection = createSelection(`<p>0123</p>`);
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);
       selection.format('italic', true);
       selection.cursor.textNode.data = `${Cursor.CONTENTS}|`;
       selection.setNativeRange(selection.cursor.textNode, 2);
@@ -434,7 +434,7 @@ describe('Selection', () => {
 
     test('no cleanup', () => {
       const selection = createSelection('<p>0123</p><p><br></p>');
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);
       selection.format('italic', true);
       selection.root.removeChild(selection.root.lastChild as Node);
       selection.scroll.update();
@@ -449,7 +449,7 @@ describe('Selection', () => {
         const selection = createSelection(
           '<p><strong><a href="https://example.com">link</a></strong></p><p><br></p>',
         );
-        selection.setRange(new Range(4));
+        selection.setRange(new Range(4, 0), Emitter.sources.USER);
         selection.format('bold', false);
         expect(selection.root).toEqualHTML(`
           <p><strong><a href="https://example.com">link</a></strong><span class="ql-cursor">${Cursor.CONTENTS}</span></p>
@@ -461,7 +461,7 @@ describe('Selection', () => {
         const selection = createSelection(
           '<p><strong><em><a href="https://example.com">bold</a></em></strong></p><p><br></p>',
         );
-        selection.setRange(new Range(4));
+        selection.setRange(new Range(4, 0), Emitter.sources.USER);
         selection.format('italic', false);
         expect(selection.root).toEqualHTML(`
           <p><strong><em><a href="https://example.com">bold</a></em><span class="ql-cursor">${Cursor.CONTENTS}</span></strong></p>
@@ -473,7 +473,7 @@ describe('Selection', () => {
         const selection = createSelection(
           '<p><strong>bold</strong></p><p><br></p>',
         );
-        selection.setRange(new Range(4));
+        selection.setRange(new Range(4, 0), Emitter.sources.USER);
         selection.format('link', 'https://example.com');
         expect(selection.root).toEqualHTML(`
           <p><strong>bold<span class="ql-cursor">${Cursor.CONTENTS}</span></strong></p>

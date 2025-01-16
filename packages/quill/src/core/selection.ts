@@ -59,6 +59,24 @@ class Selection {
     this.savedRange = new Range(0, 0);
     this.lastRange = this.savedRange;
     this.lastNative = null;
+
+    // Ensure proper focus handling
+    this.root.addEventListener('focus', () => {
+      if (!this.hasFocus()) {
+        this.focus();
+      }
+    });
+
+    // Handle Chrome-specific selection issues
+    this.root.addEventListener('mouseup', () => {
+      if (this.hasFocus()) {
+        const native = this.getNativeRange();
+        if (native && native.native.collapsed) {
+          this.emitter.emit(Emitter.events.SELECTION_CHANGE, this.lastRange, this.lastNative, Emitter.sources.USER);
+        }
+      }
+    });
+
     this.handleComposition();
     this.handleDragging();
     this.emitter.listenDOM('selectionchange', document, () => {
@@ -144,7 +162,7 @@ class Selection {
   focus() {
     if (this.hasFocus()) return;
     this.root.focus({ preventScroll: true });
-    this.setRange(this.savedRange);
+    this.setRange(this.savedRange, Emitter.sources.API);
   }
 
   format(format: string, value: unknown) {
@@ -424,8 +442,8 @@ class Selection {
     }
   }
 
-  setRange(range: Range | null, force: boolean, source?: EmitterSource): void;
-  setRange(range: Range | null, source?: EmitterSource): void;
+  setRange(range: Range | null, force: boolean | EmitterSource, source: EmitterSource): void;
+  setRange(range: Range | null, source: EmitterSource): void;
   setRange(
     range: Range | null,
     force: boolean | EmitterSource = false,

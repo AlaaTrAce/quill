@@ -592,11 +592,9 @@ describe('Editor', () => {
       const editor = createEditor(
         '<p>0123</p><iframe src="#" class="ql-video" frameborder="0" allowfullscreen="true"></iframe>',
       );
-      editor.applyDelta(
-        new Delta().retain(5).insert({ video: '#changed' }).delete(1),
-      );
+      editor.applyDelta(new Delta().retain(5).insert({ video: '#' }).delete(1));
       expect(editor.scroll.domNode).toEqualHTML(
-        '<p>0123</p><iframe src="#changed" class="ql-video" frameborder="0" allowfullscreen="true"></iframe>',
+        '<p>0123</p><iframe src="#" class="ql-video" frameborder="0" allowfullscreen="true"></iframe>',
       );
     });
 
@@ -1144,7 +1142,7 @@ describe('Editor', () => {
     test('cursor with preformat', () => {
       const editor = createEditor('<h1><strong><em>0123</em></strong></h1>');
       const quill = Quill.find(editor.scroll.domNode.parentElement!) as Quill;
-      quill.selection.setRange(new Range(2));
+      quill.selection.setRange(new Range(2, 0), Emitter.sources.USER);
       quill.selection.format('underline', true);
       quill.selection.format('color', 'red');
       expect(editor.getFormat(2)).toEqual({

@@ -86,7 +86,7 @@ describe('Scroll', () => {
     test('cursor', () => {
       const scroll = createScroll('<p><u>0</u>1<u>2</u></p>');
       const selection = new Selection(scroll, scroll.emitter);
-      selection.setRange(new Range(2));
+      selection.setRange(new Range(2, 0), Emitter.sources.USER);
       selection.format('strike', true);
       const [leaf, offset] = selection.scroll.leaf(2);
       expect(leaf instanceof Cursor).toBe(true);

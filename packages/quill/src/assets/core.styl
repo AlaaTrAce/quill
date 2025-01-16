@@ -16,26 +16,17 @@ resets(arr)
   height: 100%
   margin: 0px
   position: relative
+  width: 100%
+  overflow: hidden
 
-.ql-container.ql-disabled
-  .ql-tooltip
-    visibility: hidden
-
-.ql-container:not(.ql-disabled)
-  li[data-list=checked],
-  li[data-list=unchecked]
-    > .ql-ui
-      cursor: pointer
-
-.ql-clipboard
-  left: -100000px
-  height: 1px
-  overflow-y: hidden
-  position: absolute
-  top: 50%
-  p
-    margin: 0
-    padding: 0
+.ql-toolbar
+  box-sizing: border-box
+  width: 100%
+  display: flex
+  flex-wrap: wrap
+  overflow: visible
+  position: relative
+  z-index: 1
 
 .ql-editor
   box-sizing: border-box
@@ -50,8 +41,12 @@ resets(arr)
   text-align: left
   white-space: pre-wrap
   word-wrap: break-word
+  width: 100%
+  caret-color: black
+  user-select: text
   > *
     cursor: text
+    user-select: text
 
   p, ol, pre, blockquote, h1, h2, h3, h4, h5, h6
     margin: 0
@@ -204,6 +199,26 @@ resets(arr)
 
   .ql-ui
     position: absolute
+
+.ql-container.ql-disabled
+  .ql-tooltip
+    visibility: hidden
+
+.ql-container:not(.ql-disabled)
+  li[data-list=checked],
+  li[data-list=unchecked]
+    > .ql-ui
+      cursor: pointer
+
+.ql-clipboard
+  left: -100000px
+  height: 1px
+  overflow-y: hidden
+  position: absolute
+  top: 50%
+  p
+    margin: 0
+    padding: 0
 
 .ql-editor.ql-blank::before
   color: rgba(0,0,0,0.6)

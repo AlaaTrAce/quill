@@ -3,6 +3,7 @@
 controlHeight = 24px
 inputPaddingWidth = 5px
 inputPaddingHeight = 3px
+toolbarPadding = 8px
 
 colorItemMargin = 2px
 colorItemSize = 16px
@@ -10,6 +11,9 @@ colorItemsPerRow = 7
 
 
 .ql-{themeName}.ql-toolbar, .ql-{themeName} .ql-toolbar
+  padding: toolbarPadding 0
+  height: TOOLBAR_HEIGHT
+  box-sizing: border-box
   &:after
     clear: both
     content: ''
