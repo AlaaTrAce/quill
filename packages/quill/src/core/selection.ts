@@ -61,6 +61,25 @@ class Selection {
     this.lastNative = null;
     this.handleComposition();
     this.handleDragging();
+
+    // Handle root element clicks specifically for Chrome
+    this.root.addEventListener('click', (e) => {
+      if (e.target === this.root) {
+        const range = document.createRange();
+        const firstChild = this.root.firstChild;
+        if (firstChild) {
+          range.setStart(firstChild, 0);
+          range.setEnd(firstChild, 0);
+          const selection = window.getSelection();
+          if (selection) {
+            selection.removeAllRanges();
+            selection.addRange(range);
+            this.update(Emitter.sources.USER);
+          }
+        }
+      }
+    });
+
     this.emitter.listenDOM('selectionchange', document, () => {
       if (!this.mouseDown && !this.composing) {
         setTimeout(this.update.bind(this, Emitter.sources.USER), 1);
