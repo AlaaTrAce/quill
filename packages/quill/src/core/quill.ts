@@ -2,6 +2,7 @@ import { merge } from 'lodash-es';
 import * as Parchment from 'parchment';
 import type { Op } from 'quill-delta';
 import Delta from 'quill-delta';
+import { setupEditorLayout } from './layout.js'; //@Alaa: Import layout management
 import type { BlockEmbed } from '../blots/block.js';
 import type Block from '../blots/block.js';
 import type Scroll from '../blots/scroll.js';
@@ -231,59 +232,10 @@ class Quill {
     this.theme.addModule('uiNode');
     this.theme.init();
 
-    // Add ResizeObserver to handle dynamic toolbar height
+    // @Alaa: Use layout management instead of ResizeObserver
     if (this.options.modules && this.options.modules.toolbar) {
-      const toolbarElement = this.container.querySelector('.ql-toolbar');
-      if (toolbarElement) {
-        const resizeObserver = new ResizeObserver((entries) => {
-          for (const entry of entries) {
-            const toolbarHeight =
-              entry.borderBoxSize[0]?.blockSize || entry.target.clientHeight;
-            const editorContainer = this.container.querySelector('.ql-editor');
-            if (editorContainer instanceof HTMLElement) {
-              editorContainer.style.height = `calc(100% - ${toolbarHeight}px)`;
-            }
-          }
-        });
-        resizeObserver.observe(toolbarElement);
-
-        // // Also handle window resize events
-        // // Alaa: Fix this if it's the one causing issues.
-        // window.addEventListener('resize', () => {
-        //   const toolbarHeight = toolbarElement.clientHeight;
-        //   const editorContainer = this.container.querySelector('.ql-editor');
-        //   if (editorContainer instanceof HTMLElement) {
-        //     editorContainer.style.height = `calc(100% - ${toolbarHeight}px)`;
-        //   }
-        // });
-      }
-    }
-
-    // Add ResizeObserver to handle dynamic toolbar width
-    if (this.options.modules && this.options.modules.toolbar) {
-      const toolbarElement = this.container.querySelector('.ql-toolbar');
-      if (toolbarElement) {
-        const resizeObserver = new ResizeObserver((entries) => {
-          for (const entry of entries) {
-            const toolbarWidth =
-              entry.borderBoxSize[0]?.inlineSize || entry.target.clientWidth;
-            const editorContainer = this.container.querySelector('.ql-editor');
-            if (editorContainer instanceof HTMLElement) {
-              editorContainer.style.width = `calc(100% - ${toolbarWidth}px)`;
-            }
-          }
-        });
-        resizeObserver.observe(toolbarElement);
-
-        // // Also handle window resize events
-        // // Alaa: Fix this if it's the one causing issues.
-        // window.addEventListener('resize', () => {
-        //   const toolbarWidth = toolbarElement.clientWidth;
-        //   const editorContainer = this.container.querySelector('.ql-editor');
-        //   if (editorContainer instanceof HTMLElement) {
-        //     editorContainer.style.width = `calc(100% - ${toolbarWidth}px)`;
-        //   }
-        // });
+      if (this.container) {
+        setupEditorLayout(this.container);
       }
     }
 
