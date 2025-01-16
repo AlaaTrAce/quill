@@ -30,7 +30,9 @@ class Editor {
       editorContainer.style.overflow = 'auto';
       editorContainer.style.maxWidth = '100%';
       editorContainer.style.position = 'relative';
-      
+      editorContainer.style.minHeight = '150px'; 
+      editorContainer.style.height = '100%'; 
+        
       // Ensure content stays within bounds
       editorContainer.style.wordWrap = 'break-word';
       editorContainer.style.overflowWrap = 'break-word';
